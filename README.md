@@ -1,56 +1,50 @@
-# EL SQL Task 15 - Window Functions
+# 📊 Elevate Lab SQL Task 15: Window Functions
 
-This project demonstrates the use of various SQL Window Functions for data analysis. It includes examples of ranking, running totals, and comparing values across rows using `employees` table data.
+A professional SQL project demonstrating the core concepts of MySQL Window Functions. It covers assigning rankings, calculating running totals, and comparing values across related rows without collapsing the result set into a single output row.
 
-## Database Schema
+## 📌 Project Objective
+The primary goal of this task is to understand how to perform advanced analytical operations using Window Functions. It illustrates how to compute values over a specific partition of data, handle duplicate ranking scenarios, and access data from preceding or succeeding rows for comparative analysis.
 
-The examples use an `employees` table with the following structure:
+## 🛠️ Technical Scope
+- **Database Management System**: SQL (MySQL)
+- **Core Concepts**: Window Functions (`OVER()`, `PARTITION BY`, `ORDER BY`)
+- **Advanced Techniques**: Ranking (`ROW_NUMBER`, `RANK`, `DENSE_RANK`), Aggregation (`SUM`), Offset Functions (`LEAD`, `LAG`), Subquery Filtering
 
-- `emp_id`: Primary Key
-- `name`: Employee Name
-- `department`: Department Name
-- `salary`: Monthly Salary
-- `joining_date`: Date of Joining
+## 🗄️ Database Schema
 
-## Key SQL Concepts Covered
+### `employees` Table
+| Column | Data Type | Constraint / Description |
+| :--- | :--- | :--- |
+| `emp_id` | INT | Primary Key |
+| `name` | VARCHAR(50) | Employee Name |
+| `department` | VARCHAR(50) | Department name |
+| `salary` | INT | Monthly salary |
+| `joining_date` | DATE | Date of Joining |
 
-### 1. Ranking Functions
+## 💻 SQL Implementations
+Key operations demonstrated in the script:
 
-- **`ROW_NUMBER()`**: Assigns a unique sequential integer to rows within a partition.
-- **`RANK()`**: Assigns a rank with gaps when there are duplicate values.
-- **`DENSE_RANK()`**: Assigns a rank without gaps for duplicate values.
+- **Database & Schema Setup**: Creation of the `task15` database and the `employees` table with sample data.
+- **Ranking Functions**:
+  - `ROW_NUMBER()`: Assigns a unique sequential integer to rows within each department based on salary.
+  - `RANK()`: Assigns a rank with gaps when there are duplicate values (e.g., tying salaries skip the next rank number).
+  - `DENSE_RANK()`: Assigns a rank without gaps for duplicate values.
+- **Aggregate Window Functions**:
+  - `SUM() OVER()`: Calculates a running total of salaries within each department, ordered by salary.
+- **Offset/Value Functions**:
+  - `LEAD()`: Accesses salary data from the next employee in the partitioned and ordered result set.
+  - `LAG()`: Accesses salary data from the previous employee to calculate salary differences between adjacent rows.
+- **Subqueries with Window Functions**: Utilizing window functions inside a subquery to filter results (e.g., finding the top earner per department using `WHERE rn = 1`), since window functions cannot be directly used in a `WHERE` clause.
 
-### 2. Aggregate Window Functions
+## 🚀 Setup & Execution
 
-- **`SUM() OVER()`**: Calculates a running total of salaries within each department.
+- **Initialize**: Execute the script to create the `task15` database and populate the `employees` table.
+- **Test Ranking**: Run the `ROW_NUMBER`, `RANK`, and `DENSE_RANK` queries to observe how different functions handle ties and sequence numbers.
+- **Test Aggregation**: Execute the `SUM(...) OVER(...)` query to see the running total calculation within each department.
+- **Test Offset Functions**: Run the `LEAD` and `LAG` queries to analyze comparisons between adjacent rows.
+- **Advanced Filtering**: Execute the subquery example to retrieve only the top-ranked employees per department.
 
-### 3. Value Functions
+> [!IMPORTANT]
+> Window functions are powerful tools for performing complex calculations across sets of rows related to the current row. Unlike regular aggregate functions (`GROUP BY`), window functions do not cause rows to become grouped into a single output row; the rows retain their separate identities.
 
-- **`LEAD()`**: Accesses data from a subsequent row in the same result set.
-- **`LAG()`**: Accesses data from a previous row in the same result set (used for calculating salary differences).
-
-## How to Run
-
-1. Execute the `CREATE DATABASE task15;` and `USE task15;` commands.
-2. Run the `CREATE TABLE` and `INSERT` statements provided in `task15.sql`.
-3. Execute the individual `SELECT` queries to see the window functions in action.
-
-## Sample Queries
-
-### Top Earner per Department
-
-```sql
-SELECT * FROM (
-    SELECT *,
-    ROW_NUMBER() OVER(PARTITION BY department ORDER BY salary DESC) rn
-    FROM employees
-) t WHERE rn = 1;
-```
-
-### Salary Difference from Previous Employee
-
-```sql
-SELECT name, department, salary,
-salary - LAG(salary) OVER(PARTITION BY department ORDER BY salary) AS salary_diff
-FROM employees;
-```
+*Developed for Elevate Lab Internship Program - SQL Practice and Interview Preparation.*
